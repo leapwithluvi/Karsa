@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { compress } from "hono/compress";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
@@ -40,8 +39,6 @@ app.use("*", async (c, next) => {
   return corsMiddlware(c, next);
 });
 
-app.use(compress());
-
 // HEALTH CHECK
 app.get("/health", (c) => {
   const rawEnv = env(c);
@@ -61,6 +58,41 @@ app.get("/health", (c) => {
     },
   });
 });
+
+import { apiSpec } from "../docs/index";
+import { rateLimiter } from "./common/middlewares/rate-limit.middleware";
+
+// ─────────────────────────────────────────────
+// API REFERENCE DOCS (placed before compress() to avoid garbled output)
+// GET /reference → Interactive Scalar API Reference UI
+// GET /api/spec   → Raw OpenAPI JSON Specification
+// ─────────────────────────────────────────────
+app.get("/reference", (c) => {
+  return c.html(`<!DOCTYPE html>
+<html>
+  <head>
+    <title>Karsa API Reference</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <script
+      id="api-reference"
+      data-url="/api/spec"
+      data-configuration='{"theme":"kepler","layout":"sidebar","defaultOpenAllTags":true}'
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+  </body>
+</html>`);
+});
+
+app.get("/api/spec", (c) => {
+  c.header("Content-Type", "application/json");
+  return c.body(JSON.stringify(apiSpec));
+});
+
+// RATE LIMITER (Max 60 requests/minute per IP)
+app.use("/api/*", rateLimiter({ max: 60, windowMs: 60 * 1000 }));
 
 // API ROUTES
 app.route("/api/v1", apiRouter);

@@ -1,0 +1,108 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Karsa SaaS API Documentation",
+    "version": "1.0.0",
+    "description": "Dokumentasi REST API Karsa - SaaS Manajemen Teks Bebas Distraksi"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8787/api/v1",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get Paginated Users List",
+        "description": "Mengambil daftar user dengan paginasi dan pencarian",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      },
+      "post": {
+        "summary": "Create New User",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "name"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User Created" }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get User Detail by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Success" },
+          "404": { "description": "User Not Found" }
+        }
+      },
+      "patch": {
+        "summary": "Update User Data",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      },
+      "delete": {
+        "summary": "Soft Delete User",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/users/{id}/restore": {
+      "post": {
+        "summary": "Restore Soft-Deleted User",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}

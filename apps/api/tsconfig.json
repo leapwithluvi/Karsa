@@ -6,9 +6,10 @@
     "strict": true,
     "skipLibCheck": true,
     "lib": ["ESNext"],
-    "types": ["@cloudflare/workers-types"],
-    "baseUrl": ".",
+    "types": ["@cloudflare/workers-types", "bun-types"],
+    "resolveJsonModule": true,
     "paths": {
+      "*": ["./*"],
       "@/*": ["./src/*"]
     }
   }

@@ -6,7 +6,8 @@
     "deploy": "wrangler deploy --minify src/index.ts",
     "cf-typegen": "wrangler types",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "test": "bun test"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251218.0",
     "@types/pg": "^8.23.1",
+    "bun-types": "^1.4.2",
     "drizzle-kit": "^0.31.10",
     "wrangler": "^4.110.0"
   }

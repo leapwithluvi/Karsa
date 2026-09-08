@@ -33,7 +33,7 @@ userRoutes.get("/", async (c) => {
     return c.json({
         ...buildResponse(result.data),
         meta: {
-            timestamp: new Date().toDateString(),
+            timestamp: new Date().toISOString(),
             requestId: crypto.randomUUID(),
             ...result.pagination,
         }
