@@ -1,0 +1,1 @@
+# Global TypeScript definitions & Context Hono Env

@@ -3,7 +3,7 @@ import { compress } from "hono/compress";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { ApiResponse } from "./types";
+import { ApiResponse } from "./common/types";
 import { env } from "hono/adapter";
 import { createConfig } from "./config/env";
 import apiRouter from "./routes";
