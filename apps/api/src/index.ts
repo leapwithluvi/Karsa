@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
+import { bodyLimit } from "hono/body-limit";
 import { ApiResponse } from "./common/types";
 import { env } from "hono/adapter";
 import { createConfig } from "./config/env";
@@ -93,6 +95,31 @@ app.get("/api/spec", (c) => {
 
 // RATE LIMITER (Max 60 requests/minute per IP)
 app.use("/api/*", rateLimiter({ max: 60, windowMs: 60 * 1000 }));
+
+// CSRF PROTECTION (Ensures requests are from allowed origins)
+app.use("/api/*", csrf());
+
+// BODY LIMIT (Prevents DoS from large payloads - 2MB max)
+app.use(
+  "/api/*",
+  bodyLimit({
+    maxSize: 2 * 1024 * 1024,
+    onError: (c) => {
+      const response: ApiResponse = {
+        success: false,
+        error: {
+          code: "PAYLOAD_TOO_LARGE",
+          message: "Request payload is too large. Maximum size is 2MB.",
+        },
+        meta: {
+          timestamp: new Date().toISOString(),
+          requestId: crypto.randomUUID(),
+        },
+      };
+      return c.json(response, 413);
+    },
+  })
+);
 
 // API ROUTES
 app.route("/api/v1", apiRouter);
