@@ -1,8 +1,6 @@
 import { and, count, desc, eq, ilike, isNotNull, isNull, or, SQL } from "drizzle-orm";
 import { getDb } from "@/db";
-import { createUserSchema, getUsersQuerySchema, updateUserSchema } from "./users.schema";
 import { users } from "@/db/schema";
-import z from "zod";
 import { CreateUserInput, GetUsersQuery, UpdateUserInput } from "./users.types";
 
 export const UserService = {
